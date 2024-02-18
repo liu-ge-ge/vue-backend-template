@@ -8,6 +8,8 @@ export function getWebToken() {
 }
 
 //设置token值
-export function setWebToken(token: string) {
-  localStorage.setItem(WEB_TOKEN_NAME, token)
+export function setWebToken(token?: string) {
+  if (token) {
+    localStorage.setItem(WEB_TOKEN_NAME, token)
+  }
 }

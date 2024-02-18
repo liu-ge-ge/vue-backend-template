@@ -4,7 +4,9 @@ import { resolve } from 'path'
 import eslint from 'vite-plugin-eslint'
 import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
-export default defineConfig(() => {
+import { viteMockServe } from 'vite-plugin-mock'
+export default defineConfig(({ command }) => {
+  const isBuild = command === 'build'
   return {
     resolve: {
       alias: {
@@ -29,10 +31,18 @@ export default defineConfig(() => {
           }),
         ],
       }),
+      viteMockServe({
+        mockPath: './src/mock',
+        localEnabled: !isBuild,
+      }),
     ],
     build: {
       target: 'chrome63',
       chunkSizeWarningLimit: 2000,
+    },
+    server: {
+      open: true,
+      port: 8080,
     },
   }
 })

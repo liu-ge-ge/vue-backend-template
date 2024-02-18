@@ -22,6 +22,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-undef': 'off',
+    'vue/multi-word-component-names': 'off',
     // 'prettier/prettier': {
     //   'arrow-parens': [2, 'as-needed'],
     // },

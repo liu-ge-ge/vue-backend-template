@@ -4,7 +4,7 @@ import { message } from 'ant-design-vue'
 
 export const useThemeStore = defineStore('theme', {
   state: (): ThemeState => ({
-    themeColor: '#1890ff',
+    themeColor: '#0baed2',
   }),
   actions: {
     changeDarkOrLightMode() {

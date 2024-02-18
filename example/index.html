@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外圆角tab示例</title>
+</head>
+<style>
+    .tab {
+        width: 200px;
+        height: 90px;
+        background-color: blue;
+        padding-left: 20px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+
+    .tab-item {
+        width: 100%;
+        height: 30px;
+    }
+
+    .tab-item-active {
+        background-color: white;
+        border-radius: 25px 0 0 25px;
+        position: relative;
+    }
+
+    .tab-item-active::before {
+        content: '';
+        width: 30px;
+        height: 100%;
+        border-radius: 50%;
+        background-color: blue;
+        position: absolute;
+        right: 0;
+        z-index: 5;
+        top: -100%
+    }
+
+    .tab-item-active::after {
+        content: '';
+        width: 30px;
+        height: 100%;
+        border-radius: 50%;
+        background-color: blue;
+        position: absolute;
+        right: 0;
+        z-index: 5;
+        top: 100%
+    }
+
+    .tab-item-active .tab-item-active-before {
+        width: 15px;
+        height: 50%;
+        background-color: white;
+        position: absolute;
+        right: 0;
+        top: -50%;
+        z-index: 4;
+    }
+
+    .tab-item-active .tab-item-active-after {
+        width: 15px;
+        height: 50%;
+        background-color: white;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        z-index: 4;
+    }
+</style>
+<body>
+    <div class="tab">
+        <div class="tab-item">
+            <div class="tab-item-active-before"></div>
+            <div class="tab-item-active-after"></div>
+        </div>
+        <div class="tab-item tab-item-active">
+            <div class="tab-item-active-before"></div>
+            <div class="tab-item-active-after"></div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-item-active-before"></div>
+            <div class="tab-item-active-after"></div>
+        </div>
+    </div>
+    <script>
+        let activeIndex = 0
+        let tabItemList = document.querySelectorAll('.tab .tab-item')
+        console.log(tabItemList)
+        tabItemList.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                activeIndex = index
+                tabItemList.forEach((tabItem, tabIndex) => {
+                    tabItem.className = 'tab-item'
+                })
+                tabItemList[activeIndex].className = 'tab-item tab-item-active'
+
+            })
+        })
+    </script>
+</body>
+</html>

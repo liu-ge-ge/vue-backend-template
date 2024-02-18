@@ -158,3 +158,62 @@ npm install unplugin-vue-components -D
 ```
 
 #### 4. vite.config.ts
+
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
+import eslint from 'vite-plugin-eslint'
+import Components from 'unplugin-vue-components/vite'
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+export default defineConfig(() => {
+  return {
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        less: {
+          math: 'always',
+          additionalData: `@import "${resolve(__dirname, './src/styles/theme-color.less')}";`,
+        },
+      },
+    },
+    plugins: [
+      vue(),
+      eslint(),
+      Components({
+        resolvers: [
+          AntDesignVueResolver({
+            importStyle: false, // css in js
+          }),
+        ],
+      }),
+    ],
+    build: {
+      target: 'chrome63',
+      chunkSizeWarningLimit: 2000,
+    },
+  }
+})
+```
+
+## 🤟 响应式方案
+
+#### 1. 方案一 媒体查询方案
+
+- 当设备宽度最大是 768 时说明该设备是手机或者平板的竖屏，用一套样式
+- 除此之外的就用 pc 的一套样式
+
+```css
+/**pc 和 平板宽屏 */
+
+/** 手机和平板竖屏 */
+@media screen and (max-width: 768px) {
+  body {
+    background-color: green;
+  }
+}
+```
