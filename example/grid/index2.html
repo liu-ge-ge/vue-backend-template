@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .wrapper {
+        display: grid;
+        /* 行间距和列间距都是10px */
+        grid-gap: 10px;
+        /* 分为3列每一列的宽度都是120px */
+        grid-template-columns: repeat(3, 120px);
+        /* 划分出6个单元格 , . 代表空的*/
+        grid-template-areas:
+            ". header header"
+            "sidebar content content"
+        ;
+        grid-template-rows: repeat(2, 120px);
+        background: #eee;
+        color: #444;
+    }
+
+    .sidebar {
+        /* 表示它占用sidebar的单元格 */
+        grid-area: sidebar;
+    }
+
+    .content {
+        grid-area: content;
+    }
+
+    .header {
+        grid-area: header;
+    }
+
+    .box {
+        background-color: #444;
+        color: #fff;
+        border-radius: 5px;
+        font-size: 150%;
+    }
+</style>
+<body>
+    <div class="wrapper">
+        <div class="header box">header</div>
+        <div class="sidebar box">sidebar</div>
+        <div class="content box">content</div>
+    </div>
+</body>
+</html>

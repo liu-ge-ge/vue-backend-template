@@ -2,40 +2,18 @@
   <div
     @click.stop="switchTab(item.activeIndex, item)"
     class="web-tab-item"
-    :class="[
-      activeBgIndex[activeBgIndex.length - 1] === item.activeIndex &&
-      item.children.length === 0
-        ? 'web-tab-active-item'
-        : '',
-    ]"
-    :style="{
-      paddingLeft: item.parentId === 0 ? 0 : '20px',
-      marginBottom: item.parentId === 0 ? '5px' : '',
-      paddingTop: item.parentId === 0 || item.children.length ? '40px' : '0px',
-      overflow:
-        !props.activeIndex?.includes(item.activeIndex) ||
-        !props.activeBgIndex.includes(item.activeIndex)
-          ? 'hidden'
-          : '',
-      height:
-        props.activeIndex?.includes(item.activeIndex) && item.children.length
-          ? menuAutoHeight(item)
-          : '40px',
-    }"
+    :class="webTabItemClass(item)"
+    :style="webTabItemStyle(item)"
     v-for="(item, index) in props.data"
     :key="index"
   >
+    <!-- 选中项的圆角 -->
     <div class="tab-item-active-before"></div>
     <div class="tab-item-active-after"></div>
     <!-- item.children.length * 40 + 40 + 'px' -->
     <div
       class="tab-item-parent"
-      :class="[
-        activeBgIndex.includes(item.activeIndex) ? 'web-tab-active-color' : '',
-        item.parentId !== 0 && !props.activeBgIndex.includes(item.activeIndex)
-          ? 'web-tab-no-color'
-          : '',
-      ]"
+      :class="tabItemClass(item)"
       :style="{
         width: item.parentId === 0 ? '100%' : '230px',
       }"
@@ -56,53 +34,104 @@
         ></CreateIcon>
       </div>
     </div>
-    <div>
-      <for-tab
-        :sourceCode="data"
-        :data="item.children"
-        :activeIndex="props.activeIndex"
-        :activeBgIndex="props.activeBgIndex"
-      ></for-tab>
-    </div>
+    <!-- 子集 -->
+    <!-- <div> -->
+    <lv-menu
+      :data="item.children"
+      :activeIndex="props.activeIndex"
+      :activeBgIndex="props.activeBgIndex"
+    ></lv-menu>
+    <!-- </div> -->
   </div>
 </template>
 
 <script lang="ts" setup>
 import CreateIcon from '@/components/CreateIcon'
-import ForTab from './forTab.vue'
+import LvMenu from './lv-menu.vue'
 import { MenuItemType } from '@/api/menu/menu'
 import mitt from '@/utils/mitt'
+
 const props = defineProps<{
-  sourceCode: Array<MenuItemType>
+  // 要渲染的数据
   data: Array<MenuItemType>
   activeIndex: string
   activeBgIndex: Array<string>
 }>()
 
+// class 'web-tab-item'
+const webTabItemClass = item => {
+  return props.activeBgIndex[props.activeBgIndex.length - 1] ===
+    item.activeIndex && item.children.length === 0
+    ? 'web-tab-active-item'
+    : ''
+}
+
+//style
+const webTabItemStyle = item => {
+  /**
+   * parentId === 0 说明是顶级菜单
+   */
+  let isTopMenu = item.parentId === 0
+  return {
+    paddingLeft: isTopMenu ? 0 : '20px',
+    marginBottom: isTopMenu ? '5px' : '',
+    paddingTop: isTopMenu || item.children.length ? '40px' : '0px',
+    overflow:
+      !props.activeIndex?.includes(item.activeIndex) ||
+      !props.activeBgIndex.includes(item.activeIndex)
+        ? 'hidden'
+        : '',
+    height:
+      props.activeIndex?.includes(item.activeIndex) && item.children.length
+        ? menuAutoHeight(item)
+        : '40px',
+  }
+}
+
+// 每一个menu的样式
+const tabItemClass = item => {
+  return [
+    props.activeBgIndex.includes(item.activeIndex)
+      ? 'web-tab-active-color'
+      : '',
+    item.parentId !== 0 && !props.activeBgIndex.includes(item.activeIndex)
+      ? 'web-tab-no-color'
+      : '',
+  ]
+}
+
 const menuAutoHeight = data => {
+  // l-0-0
   const activeIndex = data.activeIndex
+  // 说明一个都没有点
   if (activeIndex === props.activeIndex) {
     //如果相等，就返回data.children.length * 40 + 40 + 'px'
     return data.children.length * 40 + 40 + 'px'
   } else {
-    // 如果不相等就拿到源数据向下查找到切换到的tabIndex
+    // 如果不相等，就拿到源数据向下查找到切换到的activeIndex
+    // [0,0,0]
     const indexArr = props.activeIndex?.replace('l-', '').split('-') || []
-    let depthIndex = 0
-    const length = activeIndexDepth(data, indexArr, depthIndex) + 1
+    const length = activeIndexDepth(data, indexArr) + 1
+    //每一个菜单的高度都为40px
     return length * 40 + 'px'
   }
 }
-// 计算菜单的高度
+
+// 计算菜单的深度
 /**
  *
  * @param sourceCode 点击菜单的数据
  * @param indexArr 点击菜单在源书中的位置
  * @param depthIndex 循环的深度 / 进入到第几层的children
+ * @return 就是当前选中的activeIndex 有多深
  */
 function activeIndexDepth(sourceCode, indexArr, depthIndex = 0) {
   let length = 0
+  //结束条件
   if (sourceCode && sourceCode.children.length) {
+    //要累加子菜单的长度children
     length += sourceCode.children.length
+    //递归，indexArr[depthIndex + 1] 用于获取当前是children中的哪一个数据
     length += activeIndexDepth(
       sourceCode.children[indexArr[depthIndex + 1]],
       indexArr,
@@ -122,6 +151,7 @@ function activeIndexDepth(sourceCode, indexArr, depthIndex = 0) {
  */
 const switchRoute = (tabIndex: string, data) => {
   let arr: Array<string> = [tabIndex]
+  // [0,0,0]
   let lengthArr = tabIndex.split('-')
   //必须是没有children 才可以触发
   if (!data.children.length) {
@@ -130,48 +160,49 @@ const switchRoute = (tabIndex: string, data) => {
     let tabIndexCopy = tabIndex
     //这里的作用是把这个路由以上的所有tabindex收集
     for (let i = 0; i < lengthArr.length - 2; i++) {
+      // 这里-2 是为了忽略最后一级子菜单
       tabIndexCopy = tabIndexCopy.slice(0, tabIndexCopy.length - 2)
       arr.unshift(tabIndexCopy)
     }
     return arr
   }
+  // 如果单击的是有子菜单的菜单
   return props.activeBgIndex
 }
 
 //切换菜单  , 动效方面
+/**
+ * @params tabIndex 点击menu的activeIndex
+ * @params data 点击menu的数据
+ */
 const switchTab = (tabIndex: string, data) => {
-  //这里是真正触发路由更新的地方
+  //先切换activeBgIndex
   mitt.emit('changeBgIndex', switchRoute(tabIndex, data))
   //点击选中的子菜单但是该菜单没有子菜单直接退出
-  if (props.activeIndex === data.activeIndex && !data.children.length) return
 
-  //判断点击的这个有没有子菜单
-  if (tabIndex === props.activeIndex) {
-    if (tabIndex.length > 3) {
-      //这里就说明点击的不是顶级菜单，如果不是顶级菜单减去后边两个字符就可以了。
-      mitt.emit('switchTab', tabIndex.slice(0, tabIndex.length - 2))
-    } else {
-      //是顶级菜单
-      //本来打开着，但是再次点击就要关闭
-      mitt.emit('switchTab', '0')
-    }
+  if (props.activeIndex === tabIndex && !data.children.length) {
+    return
+  } else if (tabIndex === props.activeIndex) {
+    // 说明和上一次点击的是一样的
+    //1. 这里大于3说明不是顶级菜单
+    //2. 0 是关闭所有展开
+    tabIndex.length > 3
+      ? mitt.emit('switchTab', tabIndex.slice(0, -2))
+      : mitt.emit('switchTab', '0')
+  } else if (props.activeIndex.slice(0, -2) === tabIndex && data.children) {
+    //关闭选中菜单的展开形态
+    mitt.emit('switchTab', tabIndex.slice(0, -2))
+  } else if (props.activeBgIndex.includes(tabIndex) && data.children) {
+    //说明要再次展开选择的菜单,和上一个else是对立的
+    /**
+     * ['l-0','l-0-0','l-0-0-0'] 中查找 l-0
+     */
+
+    //查找点击的索引
+    const activeIndex = props.activeBgIndex.indexOf(tabIndex)
+    mitt.emit('switchTab', props.activeBgIndex[activeIndex + 1])
   } else {
-    //两次点击的不是同一个
-    //如果点击的是一个有子菜单的子菜单，让它截取一下,关闭其展开状态
-    if (
-      props.activeIndex.slice(0, props.activeIndex.length - 2) === tabIndex &&
-      data.children
-    ) {
-      mitt.emit('switchTab', tabIndex.slice(0, tabIndex.length - 2))
-    } else {
-      //说明要再次展开选择的菜单,解决点击展开子菜单其菜单overflow问题
-      if (props.activeBgIndex.includes(tabIndex) && data.children) {
-        const activeIndex = props.activeBgIndex.indexOf(tabIndex)
-        mitt.emit('switchTab', props.activeBgIndex[activeIndex + 1])
-      } else {
-        mitt.emit('switchTab', tabIndex)
-      }
-    }
+    mitt.emit('switchTab', tabIndex)
   }
 }
 </script>

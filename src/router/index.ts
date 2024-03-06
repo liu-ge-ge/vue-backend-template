@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { routes } from './routes'
+import { start, close } from '@/utils/nprogress'
 import { useUserStore } from '@/store/modules/user'
 import { getWebToken } from '@/utils/token'
 import { WEB_NO_LOGIN, WEB_ROOT_PATH } from '@/config/setting'
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -13,6 +15,7 @@ const router = createRouter({
  * from : 当前到衡阳正要离开的路由
  */
 router.beforeEach(async (to, from) => {
+  start()
   console.log(to, from)
   //判断是否登录
   if (!getWebToken()) {
@@ -44,6 +47,10 @@ router.beforeEach(async (to, from) => {
       }
     }
   }
+})
+
+router.afterEach(() => {
+  close()
 })
 
 export default router

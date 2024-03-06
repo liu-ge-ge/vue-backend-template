@@ -1,0 +1,97 @@
+.web-user {
+  padding: 20px;
+  width: 100%;
+  // antdvue组件的字体背景修改
+  &-top {
+    color: var(--color);
+    .web-fun-col-center();
+
+    .web-user-nickname {
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bolder;
+    }
+
+    .web-user-motto {
+      margin-top: 10px;
+    }
+  }
+
+  &-info {
+    color: var(--color);
+    margin-top: 20%;
+
+    .user-info-item {
+      margin-bottom: 15px;
+      .web-fun-row-center();
+
+      label {
+        flex: 1;
+        margin-left: 20px;
+        font-size: 15px;
+      }
+    }
+  }
+
+  &-tag {
+    color: var(--color);
+    margin-top: 15%;
+    font-size: 17px;
+    font-weight: bold;
+
+    .user-tag-title {
+      margin-bottom: 10px;
+    }
+  }
+
+  .web-cell {
+    color: var(--color);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &-item {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eceaea;
+      display: flex;
+      justify-content: space-between;
+
+      .item-left {
+        .web-fun-center();
+
+        .web-login-app-item {
+          padding: 10px;
+          color: #fff;
+          font-size: 20px;
+          border-radius: 25px;
+          margin-right: 10px;
+        }
+      }
+
+      .item-right {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .cell-item-top {
+          margin-bottom: 10px;
+        }
+
+        .cell-item-bottom {
+          display: flex;
+          justify-content: space-between;
+
+          span {
+            font-size: 13px;
+            color: #afaeae;
+          }
+
+          a {
+            color: var(--theme-color);
+          }
+        }
+      }
+    }
+  }
+}

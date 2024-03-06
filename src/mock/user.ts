@@ -7,7 +7,8 @@ export default [{
             message:'登录成功!',
             data:{
                     avatar:'https://avatars.githubusercontent.com/u/65114586?v=4',
-                    nickname:'liugege',
+                    nickName:'刘超宾-LC',
+                    motto:'我不是永远的倒数第一!',
                     sex:'1',
                     roles:[
                         {

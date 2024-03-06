@@ -73,6 +73,11 @@ function menuHandle(authorities: Menu[], parentId = 0) {
 interface UserStateType {
   menu: Array<MenuItemType>
   routes: Array<MenuItemType>
+  userInfo: {
+    nickName?: string
+    avatar?: string
+    motto?: string
+  }
 }
 export const useUserStore = defineStore('user', {
   state: (): UserStateType => ({
@@ -80,10 +85,17 @@ export const useUserStore = defineStore('user', {
     menu: [],
     //路由
     routes: [],
+    userInfo: {},
   }),
   actions: {
     async getWebRoutes() {
-      const { authorities } = await UserService.getUserInfo()
+      const { authorities, nickName, avatar, motto } =
+        await UserService.getUserInfo()
+      this.userInfo = {
+        nickName,
+        avatar,
+        motto,
+      }
       const menu = addMenuRedirect(menuHandle(authorities))
       this.menu = menu
       return getPaveRoute(menu)

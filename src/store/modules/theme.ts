@@ -4,7 +4,14 @@ import { message } from 'ant-design-vue'
 
 export const useThemeStore = defineStore('theme', {
   state: (): ThemeState => ({
+    //是否折叠菜单栏
+    collapse: true,
+    // 主题工具栏
+    isSidebar: false,
+    //主题颜色
     themeColor: '#0baed2',
+    //是否是暗黑主题
+    isDark: false,
   }),
   actions: {
     changeDarkOrLightMode() {
